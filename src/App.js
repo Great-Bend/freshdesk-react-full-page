@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import HelloUser from './components/HelloUser'
 
+const Fullpage = () => {
+  return(
+    <div>Full Page App</div>
+  )
+}
+
 const App = () => {
 
   const [loaded, setLoaded] = useState(false);
@@ -16,11 +22,21 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!loaded) return
-    app.initialized().then((client) => {
-      setChild((<HelloUser client={client} />))
-    })
-  }, [loaded])
+		if (!loaded) return;
+		app.initialized().then((client) => {
+			client.instance.context().then(function (data) {
+				let location = data.location;
+				console.log("location", location)
+
+				if (location === "ticket_sidebar") {
+					setChild(<HelloUser client={client} />);
+				}
+				if (location === "full_page_app") {
+					setChild(<Fullpage client={client} />);
+				}
+			});
+		});
+	}, [loaded]);
 
   return (
     <div>
